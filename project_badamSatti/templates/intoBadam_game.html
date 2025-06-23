@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badam Satti Game</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .card-display {
+            display: inline-block;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 4px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card-button:hover {
+            background-color: #45a049;
+        }
+        .card-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .player-box {
+            background-color: #e0f2f7;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .current-player-highlight {
+            border: 3px solid #3b82f6; /* Blue border for current player */
+            transform: scale(1.02);
+        }
+        .desk-card-display {
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .message-box {
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #1f2937;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .suit-color-H { color: #dc2626; } /* Red for Hearts */
+        .suit-color-D { color: #dc2626; } /* Red for Diamonds */
+        .suit-color-C { color: #1f2937; } /* Black for Clubs */
+        .suit-color-S { color: #1f2937; } /* Black for Spades */
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 bg-gray-100">
+    <div class="container max-w-4xl w-full bg-white rounded-xl shadow-lg p-6 my-8">
+        <h1 class="text-4xl font-bold text-center mb-6 text-gray-800">♠️♣️ Badam Satti 🃏♦️</h1>
+
+        <div id="game-controls" class="flex justify-center gap-4 mb-8">
+            <button id="new-game-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300">
+                Start Game
+            </button>
+            <button id="reset-game-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 hidden">
+                Reset Game
+            </button>
+        </div>
+
+        <div id="game-area" class="hidden">
+            <p class="text-xl font-semibold text-center mb-4">Game ID: <span id="game-id-display" class="text-blue-700"></span></p>
+            <p class="text-lg text-center mb-6" id="game-message">Game is starting... Player <span id="starting-player-num" class="font-bold"></span> has 7H!</p>
+
+            <!-- Current Desk State -->
+            <div class="mb-8 p-6 bg-yellow-100 border border-yellow-200 rounded-lg shadow-inner">
+                <h2 class="text-2xl font-bold text-center mb-4 text-yellow-800">Current Desk State</h2>
+                <div id="global-desk-display" class="flex flex-wrap justify-center gap-4">
+                    <div class="text-center w-full md:w-1/2 lg:w-1/4">
+                        <h3 class="font-semibold text-lg mb-2">Hearts (H) <span class="suit-color-H">♥</span></h3>
+                        <div id="desk-H" class="flex flex-wrap justify-center min-h-[40px] items-center bg-gray-50 rounded-md p-2 border border-gray-200"></div>
+                    </div>
+                    <div class="text-center w-full md:w-1/2 lg:w-1/4">
+                        <h3 class="font-semibold text-lg mb-2">Diamonds (D) <span class="suit-color-D">♦</span></h3>
+                        <div id="desk-D" class="flex flex-wrap justify-center min-h-[40px] items-center bg-gray-50 rounded-md p-2 border border-gray-200"></div>
+                    </div>
+                    <div class="text-center w-full md:w-1/2 lg:w-1/4">
+                        <h3 class="font-semibold text-lg mb-2">Clubs (C) <span class="suit-color-C">♣</span></h3>
+                        <div id="desk-C" class="flex flex-wrap justify-center min-h-[40px] items-center bg-gray-50 rounded-md p-2 border border-gray-200"></div>
+                    </div>
+                    <div class="text-center w-full md:w-1/2 lg:w-1/4">
+                        <h3 class="font-semibold text-lg mb-2">Spades (S) <span class="suit-color-S">♠</span></h3>
+                        <div id="desk-S" class="flex flex-wrap justify-center min-h-[40px] items-center bg-gray-50 rounded-md p-2 border border-gray-200"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Hands -->
+            <div id="players-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Player 1 -->
+                <div id="player-1-box" class="player-box">
+                    <h2 class="text-xl font-bold mb-3 text-blue-700">Player 1 <span class="text-base text-gray-500">(<span id="player-1-card-count"></span> cards)</span></h2>
+                    <div id="player-1-hand" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- Player 2 -->
+                <div id="player-2-box" class="player-box">
+                    <h2 class="text-xl font-bold mb-3 text-blue-700">Player 2 <span class="text-base text-gray-500">(<span id="player-2-card-count"></span> cards)</span></h2>
+                    <div id="player-2-hand" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- Player 3 -->
+                <div id="player-3-box" class="player-box">
+                    <h2 class="text-xl font-bold mb-3 text-blue-700">Player 3 <span class="text-base text-gray-500">(<span id="player-3-card-count"></span> cards)</span></h2>
+                    <div id="player-3-hand" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- Player 4 -->
+                <div id="player-4-box" class="player-box">
+                    <h2 class="text-xl font-bold mb-3 text-blue-700">Player 4 <span class="text-base text-gray-500">(<span id="player-4-card-count"></span> cards)</span></h2>
+                    <div id="player-4-hand" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+            
+            <div id="game-status-message" class="message-box text-center mt-6 hidden"></div>
+        </div>
+    </div>
+
+    <!-- Hidden form to ensure CSRF token cookie is set -->
+    <form style="display:none;" id="csrf-form">{% csrf_token %}</form>
+
+    <script>
+        let gameId = null;
+        let currentPlayer = null;
+        let gameInterval = null; // To store the interval for polling game state
+
+        // Helper to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to determine card color for styling
+        function getSuitColorClass(cardName) {
+            const suit = cardName.slice(-1);
+            if (suit === 'H' || suit === 'D') {
+                return 'suit-color-H'; // Red for Hearts and Diamonds
+            } else if (suit === 'C' || suit === 'S') {
+                return 'suit-color-C'; // Black for Clubs and Spades
+            }
+            return '';
+        }
+
+        // Function to update the UI based on game state
+        function updateUI(gameState) {
+            document.getElementById('game-id-display').textContent = gameState.game_id;
+            currentPlayer = gameState.current_player;
+
+            // Update global desk
+            for (const suit in gameState.global_desk) {
+                const cardsHtml = gameState.global_desk[suit].map(card =>
+                    `<span class="desk-card-display ${getSuitColorClass(card)}">${card}</span>`
+                ).join('');
+                document.getElementById(`desk-${suit}`).innerHTML = cardsHtml;
+            }
+
+            // Update player hands and card counts
+            document.querySelectorAll('.player-box').forEach(box => {
+                box.classList.remove('current-player-highlight');
+            });
+
+            for (let i = 1; i <= 4; i++) {
+                const playerHandDiv = document.getElementById(`player-${i}-hand`);
+                const playerCardCountSpan = document.getElementById(`player-${i}-card-count`);
+                const playerBox = document.getElementById(`player-${i}-box`);
+
+                const handCards = gameState.player_hands[i] || [];
+                playerCardCountSpan.textContent = handCards.length;
+
+                playerHandDiv.innerHTML = ''; // Clear previous cards
+
+                if (i === currentPlayer && !gameState.game_over) {
+                    playerBox.classList.add('current-player-highlight');
+                }
+
+                // Render cards for the current player, enable valid moves
+                if (i === currentPlayer && !gameState.game_over) {
+                    const validCardNumbers = new Set(gameState.valid_moves_for_current_player.map(c => c.card_num));
+                    console.log(`Player ${i}'s hand:`, handCards);
+                    console.log(`Valid cards for Player ${i}:`, gameState.valid_moves_for_current_player);
+
+                    handCards.forEach(cardName => {
+                        let cardNum = null;
+                        for (const key in gameState.cards_map) {
+                            if (gameState.cards_map[key] === cardName) {
+                                cardNum = parseInt(key);
+                                break;
+                            }
+                        }
+                        
+                        const isPlayable = validCardNumbers.has(cardNum);
+                        const button = document.createElement('button');
+                        button.classList.add('card-button');
+                        if (!isPlayable) {
+                            button.classList.add('bg-gray-400', 'cursor-not-allowed');
+                            button.disabled = true;
+                        }
+                        button.dataset.cardNum = cardNum;
+                        button.innerHTML = `<span class="${getSuitColorClass(cardName)}">${cardName}</span>`;
+                        playerHandDiv.appendChild(button);
+                    });
+                } else {
+                    // For other players or when game is over, just show cards without buttons
+                    handCards.forEach(cardName => {
+                        const span = document.createElement('span');
+                        span.classList.add('card-display', getSuitColorClass(cardName));
+                        span.textContent = cardName;
+                        playerHandDiv.appendChild(span);
+                    });
+                }
+            }
+
+            // Update game message
+            const gameMessageElement = document.getElementById('game-message');
+            const gameStatusMessageElement = document.getElementById('game-status-message');
+
+            if (gameState.game_over) {
+                if (gameState.winner_player_num) {
+                    gameMessageElement.innerHTML = `🎉 Player <span class="font-bold text-green-600">${gameState.winner_player_num}</span> wins the game! 🎉`;
+                } else {
+                    gameMessageElement.innerHTML = 'Game ended in a <span class="font-bold text-red-600">draw</span>!';
+                }
+                gameStatusMessageElement.textContent = 'Game Over!';
+                gameStatusMessageElement.classList.remove('hidden');
+                clearInterval(gameInterval); // Stop polling
+                document.getElementById('reset-game-btn').classList.remove('hidden'); // Show reset button
+                document.getElementById('new-game-btn').classList.add('hidden'); // Hide new game button
+            } else {
+                gameMessageElement.innerHTML = `It's Player <span class="font-bold text-blue-700">${currentPlayer}</span>'s turn.`;
+                gameStatusMessageElement.textContent = 'Click a card to play!';
+                gameStatusMessageElement.classList.remove('hidden');
+            }
+        }
+
+        // Function to fetch game state using XHR
+        function fetchGameState() {
+            if (!gameId) return;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/game_state/${gameId}/`, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.game_id) {
+                        updateUI(response);
+                        if (response.game_over) {
+                            clearInterval(gameInterval);
+                        }
+                    } else {
+                        document.getElementById('game-message').textContent = 'Error fetching game state: Invalid response format.';
+                        document.getElementById('game-message').classList.add('text-red-600');
+                    }
+                } else {
+                    document.getElementById('game-message').textContent = 'Network error fetching game state: ' + xhr.statusText + '. Check Django server logs.';
+                    document.getElementById('game-message').classList.add('text-red-600');
+                    console.error('Error fetching game state:', xhr.status, xhr.statusText, xhr.responseText);
+                }
+            };
+            xhr.onerror = function() {
+                document.getElementById('game-message').textContent = 'Network error during fetch game state request.';
+                document.getElementById('game-message').classList.add('text-red-600');
+                console.error('Network error on fetchGameState request.');
+            };
+            xhr.send();
+        }
+
+        // Event listener for playing a card using XHR
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('card-button')) {
+                const button = event.target;
+                if (!gameId) {
+                    document.getElementById('game-status-message').textContent = "Please start a new game first!";
+                    document.getElementById('game-status-message').classList.remove('hidden');
+                    return;
+                }
+                if (button.disabled) {
+                    return; 
+                }
+
+                const cardNum = button.dataset.cardNum;
+                document.getElementById('game-status-message').textContent = 'Playing card...';
+                document.getElementById('game-status-message').classList.remove('hidden');
+                
+                document.querySelectorAll('.card-button').forEach(btn => btn.disabled = true);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `/play_card/${gameId}/`, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            fetchGameState();
+                            document.getElementById('game-status-message').textContent = response.message;
+                            document.getElementById('game-status-message').classList.remove('hidden');
+                        } else {
+                            document.getElementById('game-status-message').textContent = 'Error playing card: ' + (response.message || 'Unknown error');
+                            document.getElementById('game-status-message').classList.add('text-red-600');
+                            document.querySelectorAll('.card-button').forEach(btn => btn.disabled = false); // Re-enable if error
+                        }
+                    } else {
+                        document.getElementById('game-status-message').textContent = 'Network error playing card: ' + xhr.statusText + '. Check Django server logs.';
+                        document.getElementById('game-status-message').classList.add('text-red-600');
+                        console.error('Error playing card:', xhr.status, xhr.statusText, xhr.responseText);
+                        document.querySelectorAll('.card-button').forEach(btn => btn.disabled = false); // Re-enable if error
+                    }
+                };
+                xhr.onerror = function() {
+                    document.getElementById('game-status-message').textContent = 'Network error during play card request.';
+                    document.getElementById('game-status-message').classList.add('text-red-600');
+                    console.error('Network error on play_card request.');
+                    document.querySelectorAll('.card-button').forEach(btn => btn.disabled = false); // Re-enable if error
+                };
+                xhr.send(JSON.stringify({ 'card_num': parseInt(cardNum) }));
+            }
+        });
+
+        // Event listener for New Game button using XHR
+        document.getElementById('new-game-btn').addEventListener('click', function() {
+            document.querySelectorAll('#game-controls button').forEach(btn => btn.disabled = true);
+            document.getElementById('game-status-message').textContent = 'Initializing game...'; // Updated message
+            document.getElementById('game-status-message').classList.remove('hidden');
+            document.getElementById('game-area').classList.add('hidden');
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/create_game/', true); // Corrected URL path here
+            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        gameId = response.game_id;
+                        document.getElementById('game-id-display').textContent = gameId;
+                        document.getElementById('game-area').classList.remove('hidden');
+                        document.getElementById('game-status-message').textContent = 'Game started!'; // Updated message
+                        document.getElementById('game-status-message').classList.remove('text-red-600');
+                        
+                        fetchGameState();
+                        if (gameInterval) clearInterval(gameInterval);
+                        gameInterval = setInterval(fetchGameState, 3000);
+
+                        document.getElementById('game-message').innerHTML = `Game is in progress. Player <span class="font-bold text-blue-700">${response.player_with_7h}</span> starts!`; // Updated message
+                        
+                        document.getElementById('new-game-btn').classList.add('hidden');
+                        document.getElementById('reset-game-btn').classList.remove('hidden');
+                    } else {
+                        document.getElementById('game-status-message').textContent = 'Error starting game: ' + (response.message || 'Unknown error'); // Updated message
+                        document.getElementById('game-status-message').classList.add('text-red-600');
+                        console.error('Game creation error:', response);
+                    }
+                } else {
+                    document.getElementById('game-status-message').textContent = 'Network error starting game: ' + xhr.statusText + '. Check Django server logs.'; // Updated message
+                    document.getElementById('game-status-message').classList.add('text-red-600');
+                    console.error('Error starting game:', xhr.status, xhr.statusText, xhr.responseText);
+                }
+                document.querySelectorAll('#game-controls button').forEach(btn => btn.disabled = false);
+            };
+            xhr.onerror = function() {
+                document.getElementById('game-status-message').textContent = 'Network error during game initialization request.'; // Updated message
+                document.getElementById('game-status-message').classList.add('text-red-600');
+                console.error('Network error on create_game request.');
+                document.querySelectorAll('#game-controls button').forEach(btn => btn.disabled = false);
+            };
+            xhr.send();
+        });
+
+        // Event listener for Reset Game button
+        document.getElementById('reset-game-btn').addEventListener('click', function() {
+            document.getElementById('game-status-message').textContent = "Are you sure you want to reset the game? This will start a completely new game. Click 'Start Game' again to confirm."; // Updated message
+            document.getElementById('game-status-message').classList.remove('hidden');
+            
+            gameId = null;
+            currentPlayer = null;
+            clearInterval(gameInterval);
+
+            document.getElementById('game-id-display').textContent = '';
+            document.getElementById('game-area').classList.add('hidden');
+            document.getElementById('desk-H').innerHTML = '';
+            document.getElementById('desk-D').innerHTML = '';
+            document.getElementById('desk-C').innerHTML = '';
+            document.getElementById('desk-S').innerHTML = '';
+
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`player-${i}-hand`).innerHTML = '';
+                document.getElementById(`player-${i}-card-count`).textContent = '';
+                document.getElementById(`player-${i}-box`).classList.remove('current-player-highlight');
+            }
+            document.getElementById('game-message').textContent = '';
+            document.getElementById('game-status-message').textContent = ''; // Clear the confirmation message
+            document.getElementById('game-status-message').classList.add('hidden');
+
+            document.getElementById('reset-game-btn').classList.add('hidden');
+            document.getElementById('new-game-btn').classList.remove('hidden');
+        });
+
+        // Initial setup on document ready
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('game-status-message').textContent = 'Welcome to Badam Satti! Click "Start Game" to begin.'; // Updated message
+            document.getElementById('game-status-message').classList.remove('hidden');
+        });
+
+    </script>
+</body>
+</html>
