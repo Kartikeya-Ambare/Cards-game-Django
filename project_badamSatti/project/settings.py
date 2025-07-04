@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$^iz%o74fkv21wdopbhwczp6wp9brb2d+6h)d)6ginrguoqu==
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.ngrok-free.app','*']
 
 
 # Application definition
@@ -65,6 +65,14 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.ngrok-free.app', # This allows all ngrok subdomains
+    'http://localhost:8000',    # Useful for local development
+    'http://127.0.0.1:8000',
+    # You can also add your specific ngrok URL if the wildcard doesn't work for some reason:
+    # 'https://6a75-2401-4900-881d-4541-f021-65e6-f2bb-b26f.ngrok-free.app',
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'

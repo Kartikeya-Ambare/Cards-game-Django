@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Badam Satti🃏</title>
+  <style>
+    /* Root variables for consistent theming, copied from index.html */
+    :root {
+      --bg-gradient: radial-gradient(#002ad273 0%, #000000 100%);
+      --blue-gradient: linear-gradient(135deg, #001439, #2A5298);
+      --card-bg: #fff;
+      --accent: #e0f7ff;
+    }
+
+    /* Universal box-sizing and font-family */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Body styles from index.html for background, height, overflow, and 3D perspective */
+    body {
+      background: var(--bg-gradient);
+      color: var(--accent);
+      height: 100vh;
+      overflow: hidden;
+      /* Hide overflow to prevent scrollbars from animation */
+      position: relative;
+      perspective: 1000px;
+      /* Essential for 3D transforms */
+      display: flex;
+      /* Use flexbox to center the main content vertically and horizontally */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Header styles, copied from index.html */
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      position: absolute;
+      /* Position absolutely to float above the content and stick to the top */
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      /* Ensure header is on top */
+    }
+
+    header nav a {
+      margin-left: 1.5rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Main content container for rules, adapted for consistency with index.html theme */
+    .container {
+      background: rgba(0, 0, 0, 0.4);
+      /* Dark, semi-transparent background */
+      border-radius: 1.5rem;
+      box-shadow:
+        0 8px 32px 0 rgba(0, 0, 0, 0.4),
+        0 2px 8px 0 rgba(0, 0, 0, 0.15);
+      padding: 2.5rem 2rem;
+      max-width: 600px;
+      /* Slightly wider to accommodate content */
+      margin: 2rem;
+      animation: fadeIn 1s ease-out;
+      z-index: 5;
+      /* Position above background cards, below header */
+      text-align: center;
+      /* Center text within the container */
+      backdrop-filter: blur(10px);
+      /* Glassmorphism effect */
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Keyframe animation for content fade-in */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: var(--accent);
+      /* Using accent color for headings */
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      /* Blue-ish glow for headings */
+      letter-spacing: 2px;
+    }
+
+    .intro {
+      font-size: 1.25rem;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    .rules-section {
+      background: rgba(0, 0, 0, 0.2);
+      /* Darker, more transparent background for rule sections */
+      border-radius: 1rem;
+      box-shadow:
+        0 2px 8px 0 rgba(0, 0, 0, 0.2),
+        0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      color: var(--accent);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      /* Align list items to the left */
+    }
+
+    .rules-section strong {
+      color: #72aeff;
+      /* A light blue for section titles within rules */
+      display: block;
+      margin-bottom: 0.8rem;
+      font-size: 1.2rem;
+    }
+
+    .rules-section ul {
+      margin: 0;
+      padding-left: 1.5rem;
+    }
+
+    .rules-section li {
+      margin-bottom: 0.6rem;
+      line-height: 1.6;
+    }
+
+    .rules-section li b {
+      color: #b3e5fc;
+      /* Lighter blue for bold text in list items */
+    }
+
+    /* Buttons container, copied from index.html */
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    /* Button styles, copied from index.html (transparent background, accent border) */
+    button {
+      background: transparent;
+      padding: 0.9rem 2rem;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1.15rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      outline: none;
+      /* Remove default focus outline */
+    }
+
+    button:hover,
+    button:focus {
+      background: var(--accent);
+      color: #001439;
+      /* Darker color on hover */
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Responsive adjustments, copied from index.html */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+
+      header nav a {
+        margin-left: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .intro {
+        font-size: 1.1rem;
+      }
+
+      .rules-section {
+        font-size: 0.95rem;
+        padding: 1rem;
+      }
+
+      .rules-section strong {
+        font-size: 1.1rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      button {
+        width: 80%;
+        padding: 0.75rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .intro {
+        font-size: 1rem;
+      }
+
+      button {
+        font-size: 1rem;
+      }
+    }
+
+    /* Styles for the animated background cards, copied from index.html */
+    .twist {
+      width: 100px;
+      height: 140px;
+      border-radius: 12px;
+      position: absolute;
+      opacity: 0.9;
+      z-index: 1;
+      /* Keep below main content */
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Keyframe animation for rotation and scaling (copied) */
+    @keyframes twisteven {
+
+      0%,
+      100% {
+        transform: rotate(0deg) scale(1.25);
+      }
+
+      25% {
+        transform: rotate(20deg) scale(1.25);
+      }
+
+      50% {
+        transform: rotate(0deg) scale(1.25);
+      }
+
+      75% {
+        transform: rotate(-20deg) scale(1.25);
+      }
+    }
+
+    @keyframes twistodd {
+
+      0%,
+      100% {
+        transform: rotate(0deg) scale(1.25);
+      }
+
+      25% {
+        transform: rotate(-20deg) scale(1.25);
+      }
+
+      50% {
+        transform: rotate(0deg) scale(1.25);
+      }
+
+      75% {
+        transform: rotate(20deg) scale(1.25);
+      }
+    }
+
+    /* Fixed positions for the animated cards (copied) */
+    .c1 {
+      top: 10%;
+      left: 5%;
+      animation: twisteven 12s linear infinite;
+    }
+
+    .c2 {
+      top: 30%;
+      right: 8%;
+      animation: twistodd 12s linear infinite;
+    }
+
+    .c3 {
+      bottom: 16%;
+      left: 11%;
+      animation: twisteven 12s linear infinite;
+    }
+
+    .c4 {
+      bottom: 30%;
+      right: 25%;
+      animation: twistodd 12s linear infinite;
+    }
+
+    .c5 {
+      bottom: 5%;
+      right: 40%;
+      animation: twisteven 12s linear infinite;
+    }
+
+    .c6 {
+      bottom: 30%;
+      left: 25%;
+      animation: twistodd 12s linear infinite;
+    }
+
+    .c7 {
+      top: 5%;
+      right: 60%;
+      animation: twisteven 12s linear infinite;
+      width: 5%;
+    }
+
+    .c8 {
+      bottom: 30%;
+      left: 25%;
+      animation: twistodd 12s linear infinite;
+    }
+
+    /* Styling for images inside the twisting divs */
+    .twist img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    /* 3D floating cards, copied from index.html */
+    .floating-card {
+      position: absolute;
+      width: 180px;
+      height: 250px;
+      background: var(--blue-gradient);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 1;
+      /* Below the main content */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.2rem;
+      opacity: 0.8;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      animation: float-effect 5s ease-in-out infinite alternate;
+    }
+
+    /* Ensure images within floating cards cover the entire area */
+    .floating-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 15px;
+    }
+
+    /* Keyframe animation for floating effect */
+    @keyframes float-effect {
+      0% {
+        transform: rotateX(32deg) translateY(10px) scale(1);
+      }
+
+      50% {
+        transform: rotateX(32deg) translateY(-22px) scale(1.02);
+      }
+
+      100% {
+        transform: rotateX(32deg) translateY(10px) scale(1);
+      }
+    }
+
+    /* Specific positions and tilts for each floating card */
+    .floating-card-1 {
+      top: 15%;
+      left: 20%;
+      transform: rotateX(35deg) rotateY(-28deg) translateZ(50px);
+      animation-delay: 0s;
+    }
+
+    .floating-card-2 {
+      bottom: 10%;
+      right: 10%;
+      transform: rotateX(-20deg) rotateY(15deg) translateZ(40px);
+      animation-delay: 0s;
+    }
+
+    .floating-card-3 {
+      top: 5%;
+      right: 20%;
+      transform: rotateX(10deg) rotateY(-40deg) translateZ(60px);
+      animation-delay: 0s;
+    }
+
+
+    /* Custom Modal styles for custom alert */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      visibility: hidden;
+      /* Hidden by default */
+      opacity: 0;
+      transition: visibility 0s, opacity 0.3s ease;
+    }
+
+    .modal-overlay.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+      color: #333;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: #0073e6;
+    }
+
+    .modal-content button {
+      margin-top: 1.5rem;
+      background: linear-gradient(90deg, #338be5 70%, #00b991 100%);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .modal-content button:hover {
+      background: linear-gradient(90deg, #00b991 70%, #338be5 100%);
+      color: #003d33;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h2>Bluff Arena</h2>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="rules.html">How to Play</a>
+      <a href="#">Login</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>Welcome to Badam Satti</h1>
+    <div class="intro">
+      Badam Satti is a traditional card game played with a standard 52-card deck among number of selected players. Each player receives the amount of 
+      cards accordingly, and the objective is to be the first player to play all their cards by following specific sequence
+      rules.
+    </div>
+    <div class="rules-section">
+      <strong>Rules</strong>
+      <ul>
+        <li><b>Starting the Game:</b> The game must begin with the 7 of Hearts (7H)</li>
+        <li><b>Initial Moves:</b> After 7H is played, players can play:
+          <ul>
+            <li>6H or 8H (consecutive to 7H)</li>
+            <li>Any 7 of other suits (7D, 7C, 7S)</li>
+          </ul>
+        </li>
+        <li><b>Sequence Play:</b> Cards must be played in consecutive order within each suit</li>
+        <li><b>Valid Moves:</b> A card can only be played if it's one value higher or lower than the existing range in
+          that suit</li>
+        <li><b>Winning:</b> First player to play all their cards wins</li>
+        <li><b>Skipping:</b> If a player has no valid moves, their turn is automatically skipped</li>
+      </ul>
+    </div>
+    <div class="buttons">
+      <button onclick="location.href='/play_game/'">Continue</button>
+      <button onclick="location.href='/index/'">Back to Main Page</button>
+    </div>
+  </div>
+
+  <!-- Background twist cards (copied from index.html) -->
+  <div class="twist c1">
+    <img src="./bs 1.png" alt="Card 1"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c2">
+    <img src="./King of Diamonds.jpeg" alt="Card 2"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c3">
+    <img src="./Queen of Clubs.jpeg" alt="Card 3"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c4">
+    <img src="./Jack of Clubs.png" alt="Card 4"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c5">
+    <img src="./Check out all of our VINTAGE PLAYING CARDS….jpeg" alt="Card 5"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c6">
+    <img src="./Badam Satti.png" alt="Card 6"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c7">
+    <img src="./bs 3.png" alt="Card 7"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+  <div class="twist c8">
+    <img src="./Blue Spades.jpeg" alt="Card 8"
+      onerror="this.onerror=null;this.src='https://placehold.co/100x140/cccccc/000000?text=Error';" />
+  </div>
+
+  <!-- Floating cards (copied from index.html) -->
+  <div class="floating-card floating-card-1">
+    <img src="./Ace 1.jpeg" alt="Floating Card 1"
+      onerror="this.onerror=null;this.src='https://placehold.co/180x250/cccccc/000000?text=Error';" />
+  </div>
+  <div class="floating-card floating-card-2">
+    <img src="./Ace 2.jpeg" alt="Floating Card 2"
+      onerror="this.onerror=null;this.src='https://placehold.co/180x250/cccccc/000000?text=Error';" />
+  </div>
+  <div class="floating-card floating-card-3">
+    <img src="./Ace 3.jpeg" alt="Floating Card 3"
+      onerror="this.onerror=null;this.src='https://placehold.co/180x250/cccccc/000000?text=Error';" />
+  </div>
+
+  <!-- Custom Modal for "Start Game" -->
+  <div id="gameStartModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Game Starting Soon!</h3>
+      <p>The game will begin in just a few moments. Get ready to bluff!</p>
+      <button onclick="hideGameStartModal()">Got It!</button>
+    </div>
+  </div>
+
+  <script>
+    function showGameStartModal() {
+      document.getElementById('gameStartModal').classList.add('visible');
+    }
+
+    function hideGameStartModal() {
+      document.getElementById('gameStartModal').classList.remove('visible');
+    }
+  </script>
+</body>
+
+</html>

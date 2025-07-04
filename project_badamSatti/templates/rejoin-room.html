@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejoin Game 🚪</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: rgb(206, 232, 255);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .game-branding h1 {
+            color: #298DDC;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .form-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #298DDC;
+            box-shadow: 0 0 0 3px rgba(41, 141, 220, 0.2);
+        }
+
+        .btn-rejoin {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745; /* Green for rejoin */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none; /* In case it's an anchor */
+        }
+
+        .btn-rejoin:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-rejoin:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #298DDC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #1a6bb2;
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: -50px; /* Start off-screen */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: top 0.5s ease-out, opacity 0.5s ease-out;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-box.error {
+            background-color: #dc3545;
+        }
+
+        .message-box.success {
+            background-color: #28a745;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Adjust body padding for smaller screens */
+            }
+
+            .main-container {
+                padding: 25px; /* Reduce main container padding */
+                border-radius: 12px;
+            }
+
+            .game-branding h1 {
+                font-size: 1.8rem; /* Slightly reduce font size for smaller screens */
+                margin-bottom: 15px;
+            }
+
+            .form-section h2 {
+                font-size: 1.3rem; /* Slightly reduce font size for smaller screens */
+                margin-bottom: 20px;
+            }
+
+            .form-group label {
+                font-size: 0.95rem;
+            }
+
+            .form-group input[type="text"] {
+                padding: 10px 12px; /* Adjust input padding */
+                font-size: 0.95rem;
+            }
+
+            .btn-rejoin {
+                padding: 12px; /* Adjust button padding */
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="game-branding">
+            <h1>Badam Satti Game</h1>
+        </div>
+
+        <div class="form-section">
+            <h2>Rejoin Game</h2>
+            <form id="rejoinGameForm">
+                {% csrf_token %}
+                <input type="hidden" id="gameId" name="game_id" value="{{ game_id }}">
+                <div class="form-group">
+                    <label for="playerName">Your Name (as entered previously):</label>
+                    <input type="text" id="playerName" name="player_name" placeholder="Enter your name" required>
+                </div>
+
+                {% if disconnected_player_num %}
+                <p style="font-size: 0.9em; color: #777; margin-top: -10px; margin-bottom: 20px;">
+                    It seems Player {{ disconnected_player_num }} was disconnected.
+                </p>
+                {% endif %}
+
+                <button type="submit" class="btn-rejoin">Rejoin Game</button>
+            </form>
+            <a href="{% url 'index' %}" class="back-link">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rejoinGameForm = document.getElementById('rejoinGameForm');
+            const playerNameInput = document.getElementById('playerName');
+            const gameIdInput = document.getElementById('gameId');
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            function displayMessage(message, type = 'info') {
+                let messageContainer = document.querySelector('.message-box');
+                if (!messageContainer) {
+                    messageContainer = document.createElement('div');
+                    messageContainer.classList.add('message-box');
+                    document.body.appendChild(messageContainer);
+                }
+
+                messageContainer.textContent = message;
+                messageContainer.className = 'message-box'; // Reset classes
+                if (type === 'error') {
+                    messageContainer.classList.add('error');
+                } else if (type === 'success') {
+                    messageContainer.classList.add('success');
+                }
+
+                messageContainer.style.opacity = '1';
+                messageContainer.style.top = '20px';
+
+                setTimeout(() => {
+                    messageContainer.style.opacity = '0';
+                    messageContainer.style.top = '-50px';
+                    setTimeout(() => {
+                        messageContainer.remove();
+                    }, 500);
+                }, 3000);
+            }
+
+            rejoinGameForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const playerName = playerNameInput.value.trim();
+                const gameId = gameIdInput.value;
+
+                if (!playerName) {
+                    displayMessage('Please enter your name!', 'error');
+                    playerNameInput.focus();
+                    return;
+                }
+
+                try {
+                    const response = await fetch('{% url "process_rejoin" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded', // Use this for form data
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: new URLSearchParams({
+                            'player_name': playerName,
+                            'game_id': gameId
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        displayMessage(data.message || 'Rejoin successful!', 'success');
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        }
+                    } else {
+                        displayMessage(data.message || 'Failed to rejoin.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error during rejoin:', error);
+                    displayMessage('An unexpected error occurred during rejoin.', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
